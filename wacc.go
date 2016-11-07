@@ -11,26 +11,20 @@ const invalidArgError int = 1
 const fileReadError int = 2
 const syntacticError int = 100
 const symanticError int = 200
-
-func errorHandler(err error, code int) {
-	fmt.Println(err)
-	os.Exit(code)
-}
+const timeFormat string = "2006/01/02 15:04:05"
 
 func main() {
 	var flags Flags
-
 	flags.Parse()
 
 	filename := flags.filename
-
 	file, err := os.Open(filename)
 
 	fmt.Printf("%v: %v\n", time.Now().Format("2006/01/02 15:04:05"), filename)
 
 	buffer, err := ioutil.ReadAll(file)
 	if err != nil {
-		errorHandler(err, fileReadError)
+		errorHandler(WaccError{err: err, exitCode: fileReadError})
 	}
 
 	wacc := &WACC{Buffer: string(buffer)}
@@ -39,13 +33,17 @@ func main() {
 	fmt.Println("-- Compiling...")
 
 	if err := wacc.Parse(); err != nil {
-		errorHandler(err, syntacticError)
+		errorHandler(WaccError{err: err, exitCode: syntacticError})
 	}
 
 	if flags.printTree {
-		fmt.Println("-- Abstract Syntax Tree")
-		wacc.PrintSyntaxTree()
+		printAST(wacc)
 	}
 
-	fmt.Println("\n-- Finished")
+	fmt.Println("-- Finished")
+}
+
+func printAST(wacc *WACC) {
+	fmt.Println("-- Abstract Syntax Tree")
+	wacc.PrintSyntaxTree()
 }
