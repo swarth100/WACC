@@ -8,7 +8,6 @@ import (
 type Flags struct {
 	filename  string
 	printTree bool
-	// Add more
 }
 
 func (f *Flags) Parse() {
@@ -16,9 +15,8 @@ func (f *Flags) Parse() {
 	flag.Parse()
 
 	if len(flag.Args()) == 0 {
-		errorHandler(errors.New("Error: Input file missing"), invalidArgError)
+		errorHandler(WaccError{err: errors.New("Error: Input file missing"), exitCode: invalidArgError})
 	}
 
 	f.filename = flag.Args()[0]
-
 }
