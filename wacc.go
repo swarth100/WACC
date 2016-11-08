@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"os"
@@ -24,7 +25,7 @@ func main() {
 
 	buffer, err := ioutil.ReadAll(file)
 	if err != nil {
-		errorHandler(WaccError{err: err, exitCode: fileReadError})
+		errorHandler(WaccError{err: errors.New("Error: Input file could not be read"), exitCode: fileReadError})
 	}
 
 	wacc := &WACC{Buffer: string(buffer)}
