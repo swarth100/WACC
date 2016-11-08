@@ -693,7 +693,7 @@ func parseRHS(node *node32) (RHS, error) {
 			return call, nil
 		}
 
-		for argNode := nextNode(arglistNode.up, ruleEXPR); argNode != nil; argNode = nextNode(argNode, ruleEXPR) {
+		for argNode := nextNode(arglistNode.up, ruleEXPR); argNode != nil; argNode = nextNode(argNode.next, ruleEXPR) {
 			var err error
 			var expr Expression
 
