@@ -632,7 +632,7 @@ func parseLHS(node *node32) (LHS, error) {
 	case ruleIDENT:
 		return &VarLHS{ident: node.match}, nil
 	default:
-		return nil, fmt.Errorf("Unexpected %s", node.match)
+		return nil, fmt.Errorf("Unexpected %s %s", node.String(), node.match)
 	}
 }
 
@@ -718,7 +718,7 @@ func parseRHS(node *node32) (RHS, error) {
 
 		return exprRHS, nil
 	default:
-		return nil, fmt.Errorf("Unexpected rule %s", node.match)
+		return nil, fmt.Errorf("Unexpected rule %s %s", node.String(), node.match)
 	}
 }
 
@@ -918,7 +918,7 @@ func parseStatement(node *node32) (Statement, error) {
 
 		stm = whiles
 	default:
-		return nil, fmt.Errorf("unexpected %s", node.match)
+		return nil, fmt.Errorf("unexpected %s %s", node.String(), node.match)
 	}
 
 	if semi := nextNode(node, ruleSEMI); semi != nil {
@@ -1001,7 +1001,7 @@ func parseWACC(node *node32) (*AST, error) {
 				return nil, err
 			}
 		default:
-			return nil, fmt.Errorf("Unexpected %s", node.match)
+			return nil, fmt.Errorf("Unexpected %s %s", node.String(), node.match)
 		}
 	}
 
