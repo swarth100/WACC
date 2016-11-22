@@ -154,7 +154,15 @@ func (m* LDRInstr) String() string{
 // PUSH AND POP INSTRUCTIONS
 
 type BaseStackInstr struct {
-	Rn Reg
+	regs []Reg
+}
+
+func String(regs []Reg) string {
+	printedRegs := ""
+	for i := 0; i < len(regs)-1; i++ {
+		printedRegs += regs[i].String() + ", "
+	}
+	return "(" + printedRegs + ")"
 }
 
 type PushInstr struct {
@@ -166,9 +174,9 @@ type PopInstr struct {
 }
 
 func (m* PushInstr) String() string {
-	return "PUSH, " + m.Rn.String()
+	return "PUSH, " + String(m.regs)
 }
 
 func (m* PopInstr) String() string {
-	return "POP, " + m.Rn.String()
+	return "POP, " + String(m.regs)
 }
