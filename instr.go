@@ -301,7 +301,9 @@ func (m *LABELInstr) String() string {
 	return fmt.Sprintf("%s:", m.ident)
 }
 
-// SEGMENTS
+//------------------------------------------------------------------------------
+//SEGMENTS
+//------------------------------------------------------------------------------
 
 // DataSegInstr signals the beginning of the data segment
 type DataSegInstr struct{}
