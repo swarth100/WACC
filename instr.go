@@ -2,9 +2,9 @@ package main
 
 // ARITHMETIC OPERATORS
 // lhs is destination REG
-type BaseBinaryInstr struct{
-	lhs Reg
-	rhs Reg
+type BaseBinaryInstr struct {
+	lhs         Reg
+	rhs         Reg
 	destination Reg
 }
 
@@ -12,13 +12,13 @@ type AddInstr struct {
 	base BaseBinaryInstr
 }
 
-func (m* BaseBinaryInstr) String() string {
-	return  (m.destination).String() +
+func (m *BaseBinaryInstr) String() string {
+	return (m.destination).String() +
 		", " + (m.lhs).String() +
 		", " + (m.rhs).String()
 }
 
-func (m* AddInstr) String() string {
+func (m *AddInstr) String() string {
 	return "ADD " + m.base.String()
 }
 
@@ -26,7 +26,7 @@ type SubInstr struct {
 	base BaseBinaryInstr
 }
 
-func (m* SubInstr) String() string{
+func (m *SubInstr) String() string {
 	return "SUB " + m.base.String()
 }
 
@@ -34,7 +34,7 @@ type RSBInstr struct {
 	base BaseBinaryInstr
 }
 
-func (m* RSBInstr) String() string{
+func (m *RSBInstr) String() string {
 	return "RSB " + m.base.String()
 }
 
@@ -43,7 +43,7 @@ type CMPInstr struct {
 	base BaseBinaryInstr
 }
 
-func (m* CMPInstr) String() string{
+func (m *CMPInstr) String() string {
 	return "CMP " + m.base.String()
 }
 
@@ -51,7 +51,7 @@ type CMNInstr struct {
 	base BaseBinaryInstr
 }
 
-func (m* CMNInstr) String() string{
+func (m *CMNInstr) String() string {
 	return "CMN " + m.base.String()
 }
 
@@ -59,7 +59,7 @@ type TSTInstr struct {
 	base BaseBinaryInstr
 }
 
-func (m* TSTInstr) String() string{
+func (m *TSTInstr) String() string {
 	return "TST " + m.base.String()
 }
 
@@ -67,15 +67,16 @@ type TEQInstr struct {
 	base BaseBinaryInstr
 }
 
-func (m* TEQInstr) String() string{
+func (m *TEQInstr) String() string {
 	return "TEQ " + m.base.String()
 }
+
 //LOGICAL OPERATORS
 type ANDInstr struct {
 	base BaseBinaryInstr
 }
 
-func (m* ANDInstr) String() string{
+func (m *ANDInstr) String() string {
 	return "AND " + m.base.String()
 }
 
@@ -83,7 +84,7 @@ type EORInstr struct {
 	base BaseBinaryInstr
 }
 
-func (m* EORInstr) String() string{
+func (m *EORInstr) String() string {
 	return "EOR " + m.base.String()
 }
 
@@ -91,7 +92,7 @@ type ORRInstr struct {
 	base BaseBinaryInstr
 }
 
-func (m* ORRInstr) String() string{
+func (m *ORRInstr) String() string {
 	return "ORR " + m.base.String()
 }
 
@@ -99,7 +100,7 @@ type BICInstr struct {
 	base BaseBinaryInstr
 }
 
-func (m* BICInstr) String() string{
+func (m *BICInstr) String() string {
 	return "BIC " + m.base.String()
 }
 
@@ -108,7 +109,7 @@ type DataMovementInstr struct {
 	base BaseBinaryInstr
 }
 
-func (m* DataMovementInstr) String() string{
+func (m *DataMovementInstr) String() string {
 	return "MOV " + m.base.String()
 }
 
@@ -117,7 +118,7 @@ type MULInstr struct {
 	base BaseBinaryInstr
 }
 
-func (m* MULInstr) String() string{
+func (m *MULInstr) String() string {
 	return "MUL " + m.base.String()
 }
 
@@ -128,23 +129,23 @@ type PreIndex struct {
 }
 
 type STRInstr struct {
-	source Reg
+	source      Reg
 	destination PreIndex
 }
 
 type LDRInstr struct {
 	destination Reg
-	source PreIndex
+	source      PreIndex
 }
 
-func (m* STRInstr) String() string{
+func (m *STRInstr) String() string {
 	return "STR " + m.source.String() +
 		", [" + m.destination.Rn.String() +
 		", " + m.destination.Rm.String() +
 		", LSL #2]"
 }
 
-func (m* LDRInstr) String() string{
+func (m *LDRInstr) String() string {
 	return "LDR " + m.destination.String() +
 		", [" + m.source.Rn.String() +
 		", " + m.source.Rm.String() +
@@ -173,10 +174,10 @@ type PopInstr struct {
 	BaseStackInstr
 }
 
-func (m* PushInstr) String() string {
+func (m *PushInstr) String() string {
 	return "PUSH, " + String(m.regs)
 }
 
-func (m* PopInstr) String() string {
+func (m *PopInstr) String() string {
 	return "POP, " + String(m.regs)
 }
