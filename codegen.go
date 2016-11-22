@@ -201,7 +201,9 @@ func (m *StringPool) Lookup(msg string) int {
 
 // CodeGen base for next instruction
 func (m *BaseStatement) CodeGen(alloc *RegAllocator, insch chan<- Instr) {
-	m.next.CodeGen(alloc, insch)
+	if m.next != nil {
+		m.next.CodeGen(alloc, insch)
+	}
 }
 
 // CodeGen for skip statements
