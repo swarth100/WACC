@@ -376,6 +376,13 @@ type WhileStatement struct {
 	body Statement
 }
 
+// DoWhileStatement is the struct for a doWhile statement
+type DoWhileStatement struct {
+	BaseStatement
+	cond Expression
+	body Statement
+}
+
 // FunctionParam is the struct for a function parameter
 type FunctionParam struct {
 	TokenBase
@@ -1465,6 +1472,19 @@ func parseStatement(node *node32) (Statement, error) {
 
 		bodyNode := nextNode(node, ruleSTAT)
 		if whiles.body, err = parseStatement(bodyNode.up); err != nil {
+			return nil, err
+		}
+		stm = whiles
+	case ruleDOWHILE:
+		whiles := new(DoWhileStatement)
+
+		bodyNode := nextNode(node, ruleSTAT)
+		if whiles.body, err = parseStatement(bodyNode.up); err != nil {
+			return nil, err
+		}
+
+		exprNode := nextNode(node, ruleEXPR)
+		if whiles.cond, err = parseExpr(exprNode.up); err != nil {
 			return nil, err
 		}
 
