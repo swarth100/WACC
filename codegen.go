@@ -727,6 +727,41 @@ func (m *WhileStatement) CodeGen(alloc *RegAllocator, insch chan<- Instr) {
 	m.BaseStatement.CodeGen(alloc, insch)
 }
 
+// CodeGen generates code for DoWhileStatement
+// do_%l
+// --> [CodeGen body]
+// --> [CodeGen cond] << reg
+// --> CMP reg, 1
+// --> BEQ do_%l
+// --> [CodeGen next instruction]
+func (m *DoWhileStatement) CodeGen(alloc *RegAllocator, insch chan<- Instr) {
+	suffix := alloc.GetUniqueLabelSuffix()
+
+	labelDo := fmt.Sprintf("do%s", suffix)
+
+	insch <- &LABELInstr{ident: labelDo}
+
+	//Body
+	alloc.StartScope(insch)
+
+	m.body.CodeGen(alloc, insch)
+
+	// Condition
+	target := alloc.GetReg(insch)
+
+	m.cond.CodeGen(alloc, target, insch)
+
+	insch <- &CMPInstr{BaseComparisonInstr{lhs: target, rhs: &ImmediateOperand{1}}}
+
+	insch <- &BInstr{cond: condEQ, label: labelDo}
+
+	alloc.FreeReg(target, insch)
+
+	alloc.CleanupScope(insch)
+
+	m.BaseStatement.CodeGen(alloc, insch)
+}
+
 //CodeGen generates code for PairElemLHS
 // --> [CodeGen expr] << reg
 // --> MOV r0, reg
