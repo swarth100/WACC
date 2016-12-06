@@ -1475,7 +1475,7 @@ func parseStatement(node *node32) (Statement, error) {
 			return nil, err
 		}
 		stm = whiles
-	case ruleDOWHILE:
+	case ruleDO:
 		whiles := new(DoWhileStatement)
 
 		bodyNode := nextNode(node, ruleSTAT)
