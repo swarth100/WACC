@@ -730,6 +730,7 @@ func (m *IfStatement) TypeCheck(ts *Scope, errch chan<- error) {
 func (m *WhileStatement) TypeCheck(ts *Scope, errch chan<- error) {
 	m.cond.TypeCheck(ts, errch)
 	boolT := m.cond.Type()
+	ts.loop = ts.loop + 1
 
 	if !(BoolType{}.Match(boolT)) {
 		errch <- CreateTypeMismatchError(
@@ -740,6 +741,8 @@ func (m *WhileStatement) TypeCheck(ts *Scope, errch chan<- error) {
 	}
 
 	m.body.TypeCheck(ts.Child(), errch)
+
+	ts.loop = ts.loop - 1
 
 	m.BaseStatement.TypeCheck(ts, errch)
 }
