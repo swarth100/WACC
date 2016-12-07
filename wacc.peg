@@ -164,7 +164,6 @@ DONE		<- 'done'	!IDCHAR SPACE
 ELSE		<- 'else'	!IDCHAR SPACE
 EXIT		<- 'exit'	!IDCHAR SPACE
 FALSE		<- 'false'	!IDCHAR SPACE
-FI		<- 'fi'		!IDCHAR SPACE
 FOR		<- 'for'	!IDCHAR SPACE
 FREE		<- 'free'	!IDCHAR SPACE
 FST		<- 'fst'	!IDCHAR SPACE

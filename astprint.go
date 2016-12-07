@@ -413,7 +413,6 @@ func (stmt SwitchStatement) aststring(indent string) string {
 	return fmt.Sprintf("%v%v%v", loopStats, condStats, doStats)
 }
 
-<<<<<<< HEAD
 // Prints a WhileLoop. Format:
 // - LOOP
 //   - DO
