@@ -34,7 +34,11 @@ STAT		<- (SKIP
 		/ IF EXPR THEN STAT (ELSE LCUR? STAT RCUR?)? FI
 		/ SWITCH EXPR ON (CASE EXPR COLON STAT)* (DEFAULT COLON STAT)? END
 		/ DO STAT WHILE EXPR DONE
-		/ WHILE EXPR DO STAT DONE) (SEMI STAT?)?
+		/ WHILE EXPR DO STAT DONE
+		/ FOR STAT SEMI
+				EXPR SEMI
+				STAT
+				DO STAT DONE) (SEMI STAT?)?
 
 ASSIGNLHS	<- (PAIRELEM
 		/ ARRAYELEM
@@ -160,6 +164,8 @@ DONE		<- 'done'	!IDCHAR SPACE
 ELSE		<- 'else'	!IDCHAR SPACE
 EXIT		<- 'exit'	!IDCHAR SPACE
 FALSE		<- 'false'	!IDCHAR SPACE
+FI		<- 'fi'		!IDCHAR SPACE
+FOR		<- 'for'	!IDCHAR SPACE
 FREE		<- 'free'	!IDCHAR SPACE
 FST		<- 'fst'	!IDCHAR SPACE
 IF		<- 'if'		!IDCHAR SPACE
@@ -211,6 +217,7 @@ KEYWORD		<- ('begin'
 		/ 'exit'
 		/ 'false'
 		/ 'fi'
+		/ 'for'
 		/ 'free'
 		/ 'fst'
 		/ 'if'
