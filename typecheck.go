@@ -20,6 +20,7 @@ type Scope struct {
 	funcs      map[string]map[string]map[string]*FunctionDef
 	class      *ClassType
 	returnType Type
+	loop       int
 }
 
 // CreateRootScope creates a global scope that has no parent
@@ -411,6 +412,22 @@ func (m *AST) TypeCheck() []error {
 	}
 
 	return errs
+}
+
+// TypeCheck checks whether the statement has any type mismatches in expressions
+// and assignments. The check is propagated recursively
+func (m *ContinueStatement) TypeCheck(ts *Scope, errch chan<- error) {
+	if ts.loop == 0 {
+		errch <- CreateContinueNotInLoopError(m.Token())
+	}
+}
+
+// TypeCheck checks whether the statement has any type mismatches in expressions
+// and assignments. The check is propagated recursively
+func (m *BreakStatement) TypeCheck(ts *Scope, errch chan<- error) {
+	if ts.loop == 0 {
+		errch <- CreateBreakNotInLoopError(m.Token())
+	}
 }
 
 // TypeCheck checks whether the statement has any type mismatches in expressions
