@@ -446,6 +446,58 @@ func (m *BlockStatement) CodeGen(context *FunctionContext, insch chan<- Instr) {
 	m.BaseStatement.CodeGen(context, insch)
 }
 
+// callConstructor appends the function call to the Class constructor
+func callConstructor(m *NewInstanceRHS, context *FunctionContext, insch chan<- Instr) {
+	insch <- &PUSHInstr{BaseStackInstr: BaseStackInstr{regs: []Reg{ip}}}
+	context.PushStack(4)
+
+	argL := len(m.args)
+	for i := argL - 1; i >= 0; i-- {
+		reg := context.GetReg(insch)
+		m.args[i].CodeGen(context, reg, insch)
+		insch <- &PUSHInstr{BaseStackInstr: BaseStackInstr{regs: []Reg{reg}}}
+		context.PushStack(4)
+		context.FreeReg(reg, insch)
+	}
+
+	if len(m.obj) > 0 {
+		reg := context.GetReg(insch)
+
+		context.ResolveVarToRegister(m.obj, reg, insch)
+		loadValue := &RegisterLoadOperand{reg: reg}
+		insch <- &LDRInstr{LoadInstr{reg: reg, value: loadValue}}
+
+		context.builtInFuncs.Use(mNullReferenceLbl)
+		context.builtInFuncs.Use(mThrowRuntimeErr)
+
+		insch <- &MOVInstr{dest: r0, source: reg}
+		insch <- &BLInstr{BInstr{label: mNullReferenceLbl}}
+
+		insch <- &PUSHInstr{BaseStackInstr: BaseStackInstr{regs: []Reg{reg}}}
+
+		context.PushStack(4)
+		context.FreeReg(reg, insch)
+
+		argL++
+	}
+
+	for i := 0; i < 4 && i < argL; i++ {
+		insch <- &POPInstr{BaseStackInstr: BaseStackInstr{regs: []Reg{argRegs[i]}}}
+	}
+
+	insch <- &BLInstr{BInstr: BInstr{label: m.constr}}
+
+	if pl := argL; pl > 4 {
+		insch <- &ADDInstr{BaseBinaryInstr: BaseBinaryInstr{dest: sp, lhs: sp,
+			rhs: ImmediateOperand{(pl - 4) * 4}}}
+	}
+
+	context.PopStack(argL * 4)
+
+	insch <- &POPInstr{BaseStackInstr: BaseStackInstr{regs: []Reg{ip}}}
+	context.PopStack(4)
+}
+
 //CodeGen generates code for DeclareAssignStatement
 // --> [CodeGen rhs] << reg
 // --> STR reg [sp, #offset]
@@ -463,6 +515,10 @@ func (m *DeclareAssignStatement) CodeGen(context *FunctionContext, insch chan<- 
 	insch <- &STRInstr{StoreInstr{reg: baseReg, value: storeValue}}
 
 	context.FreeReg(baseReg, insch)
+
+	if newInst, ok := m.rhs.(*NewInstanceRHS); ok {
+		callConstructor(newInst, context, insch)
+	}
 
 	m.BaseStatement.CodeGen(context, insch)
 }
@@ -488,6 +544,10 @@ func (m *AssignStatement) CodeGen(context *FunctionContext, insch chan<- Instr) 
 
 	context.FreeReg(rhsReg, insch)
 	context.FreeReg(lhsReg, insch)
+
+	if newInst, ok := m.rhs.(*NewInstanceRHS); ok {
+		callConstructor(newInst, context, insch)
+	}
 
 	m.BaseStatement.CodeGen(context, insch)
 }
@@ -1179,6 +1239,7 @@ func (m *NewInstanceRHS) CodeGen(context *FunctionContext, target Reg, insch cha
 
 	insch <- &POPInstr{BaseStackInstr: BaseStackInstr{regs: []Reg{ip}}}
 	context.PopStack(4)
+
 }
 
 //------------------------------------------------------------------------------
