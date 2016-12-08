@@ -1,0 +1,4 @@
+begin
+	int i = 0x11;
+	println i
+end

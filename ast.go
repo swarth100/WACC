@@ -1072,6 +1072,24 @@ var PriorityMap = map[interface{}]int{
 	ExprParen{}:                  13,
 }
 
+func ParseIntLiter(enode string) (int, error) {
+	// Prefix checking
+	num, err := strconv.ParseInt(enode, 10, 32)
+	if len(enode) > 3 {
+		prefix := string(enode[: 2])
+		number := string(enode[2:])
+		switch prefix {
+		case "0x":
+			num, err = strconv.ParseInt(number, 16, 32)
+		case "0o":
+			num, err = strconv.ParseInt(number, 8, 32)
+		case "0b":
+			num, err = strconv.ParseInt(number, 2, 32)
+		}
+	}
+	return int(num), err
+}
+
 // parseExpr parses an expression and builds an expression tree that respects
 // the operator precedence
 // the function uses the shunting yard algorithm to achieve this
@@ -1204,7 +1222,7 @@ func parseExpr(node *node32) (Expression, error) {
 	for enode := range exprStream(node) {
 		switch enode.pegRule {
 		case ruleINTLITER:
-			num, err := strconv.ParseInt(enode.match, 10, 32)
+			num, err := ParseIntLiter(enode.match)
 			if err != nil {
 				// number does not fit into WACC integer size
 				numerr := err.(*strconv.NumError)
@@ -1217,7 +1235,7 @@ func parseExpr(node *node32) (Expression, error) {
 				}
 				return nil, err
 			}
-			push(&IntLiteral{value: int(num)})
+			push(&IntLiteral{value: num})
 		case ruleFALSE:
 			push(&BoolLiteralFalse{})
 		case ruleTRUE:
