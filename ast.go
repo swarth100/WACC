@@ -1620,6 +1620,13 @@ func parseStatement(node *node32) (Statement, error) {
 			}
 
 		} else if opOpNode := nextNode(node, ruleOPOP); opOpNode != nil {
+			switch assign.target.(type) {
+			case *VarLHS:
+			case *ArrayLHS:
+			default:
+				return nil, fmt.Errorf("syntax error: Side Effecting pairs not allowed")
+			}
+
 			rhs, err := parseOpOpStat(node)
 			if err != nil {
 				return nil, err
@@ -1627,6 +1634,13 @@ func parseStatement(node *node32) (Statement, error) {
 
 			assign.rhs = rhs
 		} else {
+			switch assign.target.(type) {
+			case *VarLHS:
+			case *ArrayLHS:
+			default:
+				return nil, fmt.Errorf("syntax error: Side Effecting pairs not allowed")
+			}
+
 			rhs, err := parseOpEquStat(node)
 			if err != nil {
 				return nil, err
