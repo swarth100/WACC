@@ -24,10 +24,7 @@
   }
 
   # Initiate new class
-  A a = new A() ;
-
-  # Constructor
-  call a->init(2, 3) ;
+  A a = new A(2, 3) ;
 
   # Calling function
   call a->foo() ;
