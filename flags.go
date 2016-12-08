@@ -23,6 +23,7 @@ type Flags struct {
 	printAST      bool
 	verbose       bool
 	printAssembly bool
+	optimise      bool
 }
 
 // Parse defines all the flags and then parses the command line args
@@ -39,6 +40,8 @@ func (f *Flags) Parse() {
 		"Print different stages during compilation")
 	flag.BoolVar(&f.printAssembly, "assembly", false,
 		"Print assembly instructions to STD Output")
+	flag.BoolVar(&f.optimise, "optimise", false,
+		"Optimise the AST generated from the WACC file")
 
 	flag.Parse()
 
