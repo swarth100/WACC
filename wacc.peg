@@ -135,7 +135,11 @@ IDENT		<- (!KEYWORD) (AT)? ([_] / [a-z] / [A-Z])
 
 ARRAYELEM	<- IDENT (LBRK EXPR RBRK)+
 
-INTLITER	<- INTSIGN? [0-9]+
+INTLITER	<- INTSIGN? INTPREFIX? [0-9]+
+
+INTPREFIX       <- BINARY
+		/ OCTAL
+		/ HEX
 
 INTSIGN		<- PLUS
 		/ MINUS
@@ -313,6 +317,9 @@ SEMI		<- ';'		SPACE
 EQU		<- '='  !"="	SPACE
 COMMA		<- ','		SPACE
 COLON		<- ':'		SPACE
+HEX		<- '0x'		SPACE
+BINARY		<- '0b'		SPACE
+OCTAL		<- '0o'		SPACE
 SINQUO		<- '\''
 DOUQUO		<- '\"'
 ARROW		<- '->'
