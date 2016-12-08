@@ -404,8 +404,10 @@ func (m *ExpressionRHS) Type() Type {
 // NewInstanceRHS is the for new class instance on the rhs of an assignment
 type NewInstanceRHS struct {
 	TokenBase
-	wtype Type
-	args  []Expression
+	obj    string
+	constr string
+	wtype  Type
+	args   []Expression
 }
 
 // Type returns the deduced type of the right hand side assignment source.
@@ -1511,18 +1513,7 @@ func parseStatement(node *node32) (Statement, error) {
 		}
 
 		if newInst, ok := decl.rhs.(*NewInstanceRHS); ok {
-			_ = newInst
-			fmt.Println("Works")
-			call := new(FunctionCallStat)
-
-			call.obj = decl.ident
-
-			call.ident = "init"
-
-			call.args = newInst.args
-
-			decl.SetNext(call)
-			decl.SetToken(&node.token32)
+			newInst.obj = decl.ident
 		}
 
 		stm = decl
@@ -1736,13 +1727,7 @@ func parseStatement(node *node32) (Statement, error) {
 		var next Statement
 		if nextStat := semi.next; nextStat != nil {
 			if next, err = parseStatement(nextStat.up); err == nil {
-				prevStm := stm
-				nextStm := stm.GetNext()
-				for nextStm != nil {
-					prevStm = stm.GetNext()
-					nextStm = nextStm.GetNext()
-				}
-				prevStm.SetNext(next)
+				stm.SetNext(next)
 			}
 		}
 	}
