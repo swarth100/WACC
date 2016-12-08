@@ -408,7 +408,7 @@ func (stat *FunctionCallStat) istring(level int) string {
 		params)
 }
 
-func (stmt *EnumLHS) istring(level int) string {
+func (stmt *EnumStatement) istring(level int) string {
 	//TODO
 	return ""
 }
