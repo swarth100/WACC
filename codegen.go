@@ -1023,6 +1023,12 @@ func (m *DoWhileStatement) CodeGen(context *FunctionContext, insch chan<- Instr)
 	suffix := context.GetUniqueLabelSuffix()
 
 	labelDo := fmt.Sprintf("do%s", suffix)
+	labelEnd := fmt.Sprintf("end%s", suffix)
+
+	context.PushStackSize(context.stackSize);
+
+	context.PushLastEndLabel(labelEnd)
+	context.PushLastStartLabel(labelDo)
 
 	insch <- &LABELInstr{ident: labelDo}
 
@@ -1037,10 +1043,15 @@ func (m *DoWhileStatement) CodeGen(context *FunctionContext, insch chan<- Instr)
 	m.cond.CodeGen(context, target, insch)
 
 	insch <- &CMPInstr{BaseComparisonInstr{lhs: target, rhs: &ImmediateOperand{1}}}
+	context.FreeReg(target, insch)
 
 	insch <- &BInstr{cond: condEQ, label: labelDo}
+	insch <- &LABELInstr{ident: labelEnd}
 
-	context.FreeReg(target, insch)
+	context.PopLastEndLabel()
+	context.PopLastStartLabel()
+
+	context.PopStackSize()
 
 	context.CleanupScope(insch)
 
@@ -1062,6 +1073,11 @@ func (m *ForStatement) CodeGen(context *FunctionContext, insch chan<- Instr) {
 
 	labelFor := fmt.Sprintf("for%s", suffix)
 	labelEnd := fmt.Sprintf("end%s", suffix)
+
+	context.PushStackSize(context.stackSize);
+
+	context.PushLastEndLabel(labelEnd)
+	context.PushLastStartLabel(labelFor)
 
 	// Initialization
 	context.StartScope(insch)
@@ -1090,6 +1106,11 @@ func (m *ForStatement) CodeGen(context *FunctionContext, insch chan<- Instr) {
 	insch <- &BInstr{label: labelFor}
 
 	insch <- &LABELInstr{ident: labelEnd}
+
+	context.PopLastEndLabel()
+	context.PopLastStartLabel()
+
+	context.PopStackSize()
 
 	context.CleanupScope(insch)
 
