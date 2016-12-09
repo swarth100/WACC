@@ -83,12 +83,25 @@ type ForLoopError struct {
 	err string
 }
 
-// CreateForLoopError creates an error from the token and err as a string
-func CreateForLoopError(token *token32, err string) error {
+// CreateForLoopErrorInit creates an error from the token
+func CreateForLoopErrorInit(token *token32) error {
 	return &ForLoopError{
 		SyntaxError: CreateSyntaxError(token),
-		err:         err,
-	}
+		err:         "The initialization of the loop should be a declare assign statement",}
+}
+
+// CreateForLoopErrorAfter creates an error from the token
+func CreateForLoopErrorAfter(token *token32) error {
+	return &ForLoopError{
+		SyntaxError: CreateSyntaxError(token),
+		err:         "The afterthought of the loop should be an assign statement",}
+}
+
+// CreateForLoopErrorMultiple creates an error from the token
+func CreateForLoopErrorMultiple(token *token32) error {
+	return &ForLoopError{
+		SyntaxError: CreateSyntaxError(token),
+		err:         "The initialization and the afterthought must only be one statement",}
 }
 
 // Error creates the error string from the ForLoopError
