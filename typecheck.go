@@ -874,8 +874,11 @@ func (m *ForStatement) TypeCheck(ts *Scope, errch chan<- error) {
 	case *DeclareAssignStatement:
 		t.TypeCheck(child, errch)
 	default:
-		errch <- CreateForLoopError(m.init.Token(),
-			"Declare Assign statement expected")
+		errch <- CreateForLoopErrorInit(m.init.Token())
+	}
+
+	if m.init.GetNext() != nil {
+		errch <- CreateForLoopErrorMultiple(m.init.Token())
 	}
 
 	m.cond.TypeCheck(child, errch)
@@ -893,8 +896,11 @@ func (m *ForStatement) TypeCheck(ts *Scope, errch chan<- error) {
 	case *AssignStatement:
 		t.TypeCheck(child, errch)
 	default:
-		errch <- CreateForLoopError(m.after.Token(),
-			"Assign statement expected")
+		errch <- CreateForLoopErrorAfter(m.after.Token())
+	}
+
+	if m.after.GetNext() != nil {
+		errch <- CreateForLoopErrorMultiple(m.init.Token())
 	}
 
 	m.body.TypeCheck(child, errch)
