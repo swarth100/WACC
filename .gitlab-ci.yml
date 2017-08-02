@@ -1,0 +1,18 @@
+stages:
+  - build
+  - test
+
+build:
+  stage: build
+  script:
+    - export PATH=$PATH:/usr/local/go/bin
+    - export GOPATH=$HOME/gopath
+    - make
+  artifacts:
+      paths:
+      - wacc_34
+
+test:
+  stage: test
+  script:
+    - ./tests/test

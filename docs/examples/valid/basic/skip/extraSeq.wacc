@@ -1,0 +1,11 @@
+# extra sequential composition
+
+# Output:
+# #nothing#
+
+# Exit:
+# 0
+
+# Program:
+
+begin skip; end

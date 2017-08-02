@@ -1,0 +1,14 @@
+{
+  include "singleClass.wacc"
+
+  A a = new A(2, 3) ;
+
+  call a->foo() ;
+
+  int y = call a->b() ;
+
+  call a->a(y) ;
+
+  y = call a->a() ;
+  println y
+}

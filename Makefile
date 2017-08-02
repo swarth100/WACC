@@ -1,34 +1,47 @@
-# Sample Makefile for the WACC Compiler lab: edit this to build your own comiler
-# Locations
+BINARY := wacc_34
 
-ANTLR_DIR	:= antlr
-SOURCE_DIR	:= src
-OUTPUT_DIR	:= bin 
+GOGLIDE := $(GOPATH)/bin/glide
+GOLINTER := $(GOPATH)/bin/gometalinter
+GOPEG := $(GOPATH)/bin/peg
 
-# Tools
+SRC := $(shell find . -name '*.go' -not -path '*/vendor/*')
+GRM := $(shell find . -name '*.peg' -not -path '*/vendor/*')
+SRC += $(patsubst %.peg,%.peg.go,$(GRM))
 
-ANTLR	:= antlrBuild
-FIND	:= find
-RM	:= rm -rf
-MKDIR	:= mkdir -p
-JAVA	:= java
-JAVAC	:= javac
+all: $(BINARY)
 
-JFLAGS	:= -sourcepath $(SOURCE_DIR) -d $(OUTPUT_DIR) -cp lib/antlr-4.4-complete.jar 
+$(BINARY): $(SRC) vendor
+	go build
 
-# the make rules
+vendor: $(GOGLIDE) glide.lock
+	$(GOGLIDE) install
 
-all: rules
+format:
+	go fmt
 
-# runs the antlr build script then attempts to compile all .java files within src
-rules:
-	cd $(ANTLR_DIR) && ./$(ANTLR) 
-	$(FIND) $(SOURCE_DIR) -name '*.java' > $@
-	$(MKDIR) $(OUTPUT_DIR)
-	$(JAVAC) $(JFLAGS) @$@
-	$(RM) rules
+lint: $(GOLINTER)
+	$(GOLINTER) --exclude=vendor --exclude '.peg.go'
+
+install: $(BINARY)
+	go install
+
+test: $(BINARY)
+	tests/test
 
 clean:
-	$(RM) rules $(OUTPUT_DIR)
+	go clean
 
-.PHONY: all rules clean
+$(patsubst %.peg,%.peg.go,$(GRM)): $(GRM) $(GOPEG)
+	$(GOPEG) $(patsubst %.go,%,$@)
+
+$(GOGLIDE):
+	go get -u github.com/Masterminds/glide
+
+$(GOLINTER):
+	go get -u github.com/alecthomas/gometalinter
+	$(GOLINTER) --install
+
+$(GOPEG):
+	go get -u gitlab.doc.ic.ac.uk/ss14615/peg
+
+.PHONY: all clean lint format test
